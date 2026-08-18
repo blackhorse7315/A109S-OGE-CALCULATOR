@@ -3,856 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A109S RFM Fig 4-9 Hover Ceiling OGE Calculator</title>
-    <!-- Tailwind CSS -->
+    <title>Kalkulator OGE Hover A109S - Auto Draw</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body {
-            background-color: #0b0f19;
-            color: #f1f5f9;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
-        .glass-card {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        
+        /* Pengaturan garis gambar SVG */
+        .chart-line {
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            stroke-linecap: round;
         }
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .chart-dot {
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        /* Custom scrollbar */
+        .image-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .image-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .image-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
         }
     </style>
 </head>
-<body class="min-h-screen pb-12">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <!-- Header Dokumen RFM -->
-    <header class="glass-card sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 px-4 py-3 shadow-xl">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div class="flex items-center space-x-3">
-                <div class="p-2.5 bg-sky-600/20 text-sky-400 rounded-xl border border-sky-500/30">
-                    <i class="fa-solid fa-helicopter text-2xl"></i>
-                </div>
-                <div>
-                    <div class="text-[11px] font-mono text-sky-400 tracking-wider">SECTION 4 PERFORMANCE DATA &bull; A109S RFM</div>
-                    <h1 class="text-lg font-bold text-white tracking-wide flex items-center gap-2">
-                        Figure 4-9 Hover Ceiling - OGE at Take-Off Power - AEO
-                    </h1>
-                    <p class="text-xs text-slate-400">Document N°109G0040A013 &bull; 109-60-195 Rev B</p>
-                </div>
-            </div>
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-6xl overflow-hidden flex flex-col">
+        <!-- Header -->
+        <div class="bg-blue-900 text-white p-6 relative overflow-hidden">
+            <h1 class="text-2xl font-bold flex items-center gap-3 relative z-10">
+                <i class="fa-solid fa-helicopter"></i>
+                Kalkulator OGE Hover A109S (Live Chart)
+            </h1>
+            <p class="text-blue-200 mt-2 text-sm relative z-10">Berdasarkan RFM Document N°109G0040A013 - Take-Off Power AEO</p>
+            <i class="fa-solid fa-chart-area absolute -right-4 -bottom-6 text-8xl text-blue-800 opacity-50 z-0"></i>
+        </div>
+
+        <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
-                <span class="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">
-                    ROTOR SPEED: 102%
-                </span>
-                <span class="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">
-                    ZERO WIND
-                </span>
-                <span class="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-800">
-                    ELEC LOAD: 150 A
-                </span>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-7xl mx-auto px-4 mt-6">
-        
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-            <!-- Panel Kiri: Form Parameter Input -->
-            <div class="lg:col-span-5 space-y-6">
-
-                <!-- Skenario Cepat -->
-                <div class="glass-card rounded-2xl p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-bolt text-amber-400"></i> Skenario Cepat
-                        </span>
-                        <span class="text-[10px] text-slate-500">Klik untuk memuat</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="applyPreset(0, 35, 3500, 29)" class="p-2.5 text-left rounded-xl bg-slate-900/90 hover:bg-sky-900/40 border border-slate-800 hover:border-sky-500/50 transition group">
-                            <div class="text-xs font-bold text-sky-300 group-hover:text-sky-200">Contoh Soal (3.500ft)</div>
-                            <div class="text-[11px] text-slate-400">SL 35°C &rarr; 3500ft @ 29°C</div>
-                        </button>
-                        <button onclick="applyPreset(0, 15, 0, 15)" class="p-2.5 text-left rounded-xl bg-slate-900/90 hover:bg-sky-900/40 border border-slate-800 hover:border-sky-500/50 transition group">
-                            <div class="text-xs font-bold text-emerald-300 group-hover:text-emerald-200">Sea Level Standard</div>
-                            <div class="text-[11px] text-slate-400">0ft @ 15°C (ISA)</div>
-                        </button>
-                        <button onclick="applyPreset(0, 35, 8000, 19)" class="p-2.5 text-left rounded-xl bg-slate-900/90 hover:bg-sky-900/40 border border-slate-800 hover:border-sky-500/50 transition group">
-                            <div class="text-xs font-bold text-amber-300 group-hover:text-amber-200">High Alt (8.000ft)</div>
-                            <div class="text-[11px] text-slate-400">0ft 35°C &rarr; 8000ft @ 19°C</div>
-                        </button>
-                        <button onclick="applyPreset(0, 40, 14000, 12)" class="p-2.5 text-left rounded-xl bg-slate-900/90 hover:bg-sky-900/40 border border-slate-800 hover:border-sky-500/50 transition group">
-                            <div class="text-xs font-bold text-rose-300 group-hover:text-rose-200">Hot & High (14.000ft)</div>
-                            <div class="text-[11px] text-slate-400">14000ft @ 12°C</div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Form Input Parametrik -->
-                <div class="glass-card rounded-2xl p-5 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <h2 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-sliders text-sky-400"></i> Input Parameter Penerbangan
-                        </h2>
-                        <button onclick="resetDefaults()" class="text-xs text-slate-400 hover:text-sky-300 flex items-center gap-1 transition">
-                            <i class="fa-solid fa-rotate-right"></i> Reset
-                        </button>
-                    </div>
-
-                    <!-- Departure Spot -->
-                    <div class="space-y-3">
-                        <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider block">
-                            1. Keberangkatan (Departure Spot)
-                        </span>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">
-                                    Elevasi Awal <span class="text-slate-400">(ft)</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="number" id="startAlt" value="0" step="100" min="0" max="20000"
-                                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 transition"
-                                        oninput="updateCalculation()">
-                                    <span class="absolute right-3 top-2.5 text-xs text-slate-500">ft</span>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-300 mb-1">
-                                    Suhu Awal (OAT) <span class="text-slate-400">(°C)</span>
-                                </label>
-                                <div class="relative">
-                                    <input type="number" id="startTemp" value="35" step="0.5" min="-40" max="60"
-                                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 transition"
-                                        oninput="updateCalculation()">
-                                    <span class="absolute right-3 top-2.5 text-xs text-slate-500">°C</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Destination Spot -->
-                    <div class="space-y-3 border-t border-slate-800 pt-4">
-                        <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider block">
-                            2. Pendaratan / Destination Spot
-                        </span>
-                        
-                        <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">
-                                Pressure Altitude Tujuan <span class="text-slate-400">(ft)</span>
-                            </label>
-                            <div class="relative">
-                                <input type="number" id="targetAlt" value="3500" step="100" min="-1000" max="20000"
-                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 transition"
-                                    oninput="updateCalculation()">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-500">ft</span>
-                            </div>
-                        </div>
-
-                        <!-- Lapse Rate Setting -->
-                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="text-slate-300 font-medium">Penurunan Suhu (Lapse Rate)</span>
-                                <span class="text-sky-400 font-bold font-mono" id="lapseRateVal">2.0 °C / 1000 ft</span>
-                            </div>
-                            <input type="range" id="lapseRate" min="0" max="5" step="0.1" value="2.0"
-                                class="w-full accent-sky-500 bg-slate-800 h-1.5 rounded-lg appearance-none cursor-pointer"
-                                oninput="updateCalculation()">
-                            <p class="text-[11px] text-slate-400">Standar ISA lapse rate = 1.98°C ~ 2.0°C per 1.000 ft.</p>
-                        </div>
-
-                        <!-- Target Temp -->
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <label class="block text-xs font-medium text-slate-300">
-                                    Estimasi Suhu Tujuan (OAT)
-                                </label>
-                                <button type="button" onclick="toggleManualTemp()" id="manualBtn" class="text-[11px] text-sky-400 hover:underline">
-                                    Ketik Manual Suhu
-                                </button>
-                            </div>
-                            
-                            <div class="relative">
-                                <input type="number" id="targetTemp" value="29" step="0.5" min="-40" max="60" readonly
-                                    class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-emerald-400 font-bold focus:outline-none focus:border-sky-500 transition"
-                                    oninput="updateCalculation(true)">
-                                <span class="absolute right-3 top-2.5 text-xs text-slate-400">°C</span>
-                            </div>
-                            <p id="tempCalcNote" class="text-[11px] text-slate-400 mt-1">
-                                Hitung Otomatis: 35°C - ((3500 - 0) / 1000 &times; 2°C) = <span class="text-emerald-400 font-semibold">28°C</span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Status Warning -->
-                    <div id="warningBox" class="hidden p-3 rounded-xl border text-xs leading-relaxed"></div>
-                </div>
-
-                <!-- RFM Caution Card -->
-                <div class="glass-card rounded-2xl p-4 space-y-2 border-l-4 border-l-amber-500 bg-amber-500/5">
-                    <div class="flex items-center gap-2 text-amber-400 text-xs font-bold">
-                        <i class="fa-solid fa-triangle-exclamation"></i> CAUTION RFM
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed">
-                        OGE HOVER OPERATION MAY RESULT IN VIOLATION OF H-V (Height-Velocity Diagram). Pastikan margin daya selalu mencukupi.
-                    </p>
-                </div>
-
-            </div>
-
-            <!-- Panel Kanan: Hasil & Chart Figure 4-9 -->
-            <div class="lg:col-span-7 space-y-6">
-
-                <!-- Hasil Utam Display -->
-                <div class="glass-card rounded-2xl p-5 border border-sky-500/30 bg-gradient-to-br from-slate-900 via-slate-900/90 to-sky-950/40 shadow-2xl">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <span class="text-xs font-semibold text-sky-400 uppercase tracking-wider block">
-                                Maximum Gross Weight OGE
-                            </span>
-                            <div class="flex items-baseline space-x-3 mt-1">
-                                <span id="resGwKg" class="text-4xl sm:text-5xl font-black tracking-tight text-white font-mono">
-                                    3.175
-                                </span>
-                                <span class="text-xl font-bold text-sky-400">kg</span>
-                                <span class="text-slate-600 font-light text-2xl">/</span>
-                                <span id="resGwLb" class="text-2xl font-bold text-slate-300 font-mono">7.000</span>
-                                <span class="text-sm font-semibold text-slate-400">lb</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-start sm:items-end">
-                            <span class="text-[11px] text-slate-400 mb-1">Faktor Pembatas:</span>
-                            <span id="limiterBadge" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5">
-                                <i class="fa-solid fa-shield-halved"></i> Batas Struktural Maksimum (3.175 kg)
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-800">
-                        <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                            <span class="text-[10px] text-slate-400 block">Pressure Altitude</span>
-                            <span id="metricPa" class="text-sm font-bold text-white font-mono">3.500 ft</span>
-                        </div>
-                        <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                            <span class="text-[10px] text-slate-400 block">Target OAT</span>
-                            <span id="metricOat" class="text-sm font-bold text-emerald-400 font-mono">29,0 °C</span>
-                        </div>
-                        <div class="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                            <span class="text-[10px] text-slate-400 block">Density Altitude (Est.)</span>
-                            <span id="metricDa" class="text-sm font-bold text-sky-300 font-mono">6.012 ft</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Canvas Chart Figure 4-9 -->
-                <div class="glass-card rounded-2xl p-4 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
-                            <i class="fa-solid fa-chart-area text-sky-400"></i> Visualisasi Replikasi Chart Figure 4-9
-                        </h3>
-                        <div class="flex items-center gap-3 text-[11px]">
-                            <span class="flex items-center gap-1 text-emerald-400 font-medium">
-                                <span class="w-3 h-1 bg-emerald-400 rounded-full inline-block shadow-[0_0_8px_#34d399]"></span> Plot Line
-                            </span>
-                            <span class="flex items-center gap-1 text-slate-400">
-                                <span class="w-3 h-0.5 bg-rose-500 inline-block"></span> Limit 3175kg
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Container Canvas Render -->
-                    <div class="relative w-full aspect-[4/3] bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
-                        <canvas id="chartCanvas" class="w-full h-full block cursor-crosshair"></canvas>
-                    </div>
-
-                    <div class="flex items-center justify-between text-[11px] text-slate-400 px-1">
-                        <span><i class="fa-solid fa-circle-info text-emerald-400 mr-1"></i> Proyeksi garis menyala mengikuti pembacaan grafik RFM A109S.</span>
-                        <span id="cursorCoords" class="font-mono text-slate-400">Alt: - | GW: -</span>
-                    </div>
-                </div>
-
-                <!-- Langkah Penjelasan -->
-                <div class="glass-card rounded-2xl p-5 space-y-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-sky-400"></i> Cara Membaca Grafik Figure 4-9
-                    </h3>
+            <!-- Chart Image Section -->
+            <div class="flex flex-col h-full">
+                <h2 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">
+                    <i class="fa-solid fa-map-location-dot mr-2 text-blue-600"></i> Visualisasi Grafik
+                </h2>
+                
+                <div class="image-container flex-grow bg-gray-50 rounded-xl p-2 border border-gray-200 overflow-auto max-h-[600px] flex justify-center items-start">
                     
-                    <ol class="space-y-3 text-xs text-slate-300 list-decimal list-inside">
-                        <li class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 leading-relaxed">
-                            <strong class="text-sky-300">Hitung Estimasi Suhu Tujuan:</strong><br>
-                            Suhu berkurang $2^\circ\text{C}$ tiap kenaikan $1.000\text{ ft}$.<br>
-                            <code class="bg-slate-900 px-2 py-0.5 rounded text-emerald-300 font-mono text-[11px] inline-block mt-1">
-                                Suhu Tujuan = <span id="expStartTemp">35</span>°C - ((<span id="expTargetAlt">3500</span> - <span id="expStartAlt">0</span>) / 1000 &times; <span id="expLapse">2.0</span>°C) = <span id="expCalculatedTemp">28.0</span>°C
-                            </code>
-                            <span id="expCustomNote" class="text-amber-300 font-semibold block mt-1">(Pengguna menyesuaikan suhu secara manual ke: <span id="expInputTemp">29.0</span>°C)</span>
-                        </li>
+                    <!-- Container scaling untuk zoom & overlay -->
+                    <div class="relative w-full max-w-lg h-auto transform origin-top transition-transform duration-300 hover:scale-[1.2] cursor-zoom-in group" id="chartWrapper">
+                        
+                        <!-- Gambar Asli -->
+                        <img src="1001610370.jpg" alt="Chart OGE A109S" class="w-full h-auto block rounded shadow-sm" id="bgImage"
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/600x800?text=Gambar+1001610370.jpg+Tidak+Ditemukan'; alert('Mohon pastikan gambar 1001610370.jpg satu folder dengan aplikasi.');">
+                        
+                        <!-- SVG Overlay untuk Menggambar Garis -->
+                        <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" id="drawingLayer">
+                            
+                            <!-- Garis Horizontal (Altitude -> Titik Potong Suhu) -->
+                            <line id="horizontalLine" class="chart-line" 
+                                  x1="22.7%" y1="0%" x2="22.7%" y2="0%" 
+                                  stroke="#e11d48" stroke-width="2.5" stroke-dasharray="6,4" />
+                            
+                            <!-- Titik Perpotongan -->
+                            <circle id="intersectDot" class="chart-dot" 
+                                    cx="0%" cy="0%" r="5" 
+                                    fill="#e11d48" stroke="white" stroke-width="2" opacity="0" />
+                                    
+                            <!-- Garis Vertikal (Titik Potong -> Gross Weight Bawah) -->
+                            <line id="verticalLine" class="chart-line" 
+                                  x1="0%" y1="0%" x2="0%" y2="0%" 
+                                  stroke="#e11d48" stroke-width="2.5" stroke-dasharray="6,4" />
+                            
+                            <!-- Label Nilai di Grafik -->
+                            <rect id="labelBg" x="0%" y="0%" width="50" height="20" fill="#e11d48" rx="4" opacity="0" class="transition-opacity duration-300"></rect>
+                            <text id="labelTxt" x="0%" y="0%" fill="white" font-size="12" font-weight="bold" text-anchor="middle" alignment-baseline="middle" opacity="0" class="transition-opacity duration-300"></text>
 
-                        <li class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 leading-relaxed">
-                            <strong class="text-sky-300">Tarik Garis Sumbu Y Kiri (Pressure Altitude):</strong><br>
-                            Cari nilai Pressure Altitude tujuan pada sumbu kiri: <span class="text-white font-bold font-mono" id="expPaVal">3.500 ft</span>. Tarik garis mendatar (horizontal) ke kanan.
-                        </li>
+                        </svg>
 
-                        <li class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 leading-relaxed">
-                            <strong class="text-sky-300">Potongkan dengan Kurva Suhu (OAT):</strong><br>
-                            Temukan titik potong garis horizontal dengan kurva temperatur <span class="text-emerald-400 font-bold" id="expTempVal">29°C</span>.
-                        </li>
+                        <!-- Hint overlay saat di hover -->
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all pointer-events-none rounded"></div>
+                    </div>
 
-                        <li class="p-3 rounded-xl bg-slate-950/60 border border-slate-800 leading-relaxed">
-                            <strong class="text-sky-300">Proyeksi ke Sumbu X Bawah (Gross Weight):</strong><br>
-                            Dari titik potong, tarik garis tegak lurus (vertikal) ke bawah menuju sumbu Gross Weight [kg x 100].<br>
-                            • Kapabilitas mesin murni: <span id="expUncapped" class="font-bold text-sky-300">3.380 kg</span>.<br>
-                            • Terhalang batas struktur maksimum: <span class="font-bold text-rose-400">3.175 kg (7.000 lb)</span>.<br>
-                            Maka Maximum Gross Weight yang diperbolehkan adalah: <strong class="text-emerald-400 text-sm font-mono" id="expFinalGw">3.175 kg</strong>.
-                        </li>
-                    </ol>
                 </div>
-
+                <p class="text-xs text-gray-500 mt-3 text-center">
+                    <i class="fa-solid fa-pen-nib text-red-500"></i> Garis merah ditarik otomatis berdasarkan <strong>Altitude Tujuan</strong> dan <strong>Estimasi Suhu</strong>.
+                </p>
             </div>
 
+            <!-- Calculator Section -->
+            <div class="flex flex-col gap-6">
+                <!-- Input Section -->
+                <div class="space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">
+                        <i class="fa-solid fa-calculator mr-2 text-blue-600"></i> Data Penerbangan
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ketinggian Awal (feet)</label>
+                            <input type="number" id="startAlt" value="0" step="500" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" onchange="calculate()">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Suhu Awal (°C)</label>
+                            <input type="number" id="startTemp" value="35" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" onchange="calculate()">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Elevasi Tujuan (feet)</label>
+                        <input type="number" id="targetAlt" value="3500" step="500" class="w-full px-4 py-2 border border-blue-400 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none transition font-semibold" onchange="calculate()">
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <label class="block text-sm font-medium text-blue-800 mb-1">Estimasi Suhu Tujuan (°C)</label>
+                        <div class="flex items-center justify-between">
+                            <input type="number" id="targetTemp" class="w-2/3 px-4 py-2 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold" onchange="manualTempOverride()">
+                            <button onclick="calculate()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded shadow hover:bg-blue-700 transition" title="Hitung ulang otomatis">
+                                <i class="fa-solid fa-rotate-right mr-1"></i> Auto
+                            </button>
+                        </div>
+                        <p class="text-xs text-blue-600 mt-2">*Otomatis berkurang 2°C setiap naik 1000 ft.</p>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div class="flex flex-col justify-center items-center bg-gray-50 rounded-xl p-6 border-2 border-dashed border-gray-200 mt-auto shadow-inner relative overflow-hidden">
+                    
+                    <h3 class="text-gray-500 font-medium text-center z-10">Maximum Gross Weight</h3>
+                    <div class="text-5xl font-bold text-gray-800 mt-1 tracking-tight z-10" id="resultWeight">
+                        ... <span class="text-2xl text-gray-500">kg</span>
+                    </div>
+                    
+                    <div class="mt-4 w-full text-center z-10">
+                        <div id="chartLookupInfo" class="text-sm font-medium text-rose-700 bg-rose-100 py-2 px-4 rounded-lg border border-rose-200 inline-block shadow-sm transition-all duration-500">
+                            Menghitung...
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-xs text-gray-400 text-center z-10">
+                        *Max Structural Limit 3175 kg. 
+                    </div>
+                </div>
+                
+                <button onclick="calculate()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95">
+                    Tarik Garis & Hitung <i class="fa-solid fa-arrow-right-long ml-2"></i>
+                </button>
+            </div>
         </div>
+    </div>
 
-    </main>
-
-    <!-- Script Logika Kalkulasi & Canvas Chart Render -->
     <script>
-        const state = {
-            startAlt: 0,
-            startTemp: 35,
-            targetAlt: 3500,
-            lapseRate: 2.0,
-            targetTemp: 29,
-            calculatedTemp: 28,
-            uncappedGw: 3380,
-            finalGw: 3175,
-            isManualTemp: true
+        // Data matriks yang diperhalus (dalam kg) berdasarkan chart 109G0040A013
+        const alts = [0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000];
+        const temps = [-30, -20, -10, 0, 10, 20, 30, 40];
+
+        const performanceData = [
+            /* T = -30 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3060],
+            /* T = -20 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3140, 3020, 2880],
+            /* T = -10 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3130, 2980, 2830, 2700],
+            /* T =   0 */ [3175, 3175, 3175, 3175, 3175, 3175, 3120, 2970, 2820, 2660, 2510],
+            /* T =  10 */ [3175, 3175, 3175, 3175, 3175, 3100, 2960, 2800, 2650, 2500, 2340],
+            /* T =  20 */ [3175, 3175, 3175, 3175, 3080, 2940, 2790, 2630, 2480, 2320, 2160],
+            /* T =  30 */ [3175, 3175, 3175, 3050, 2910, 2760, 2600, 2450, 2290, 2120, 1950],
+            /* T =  40 */ [3175, 3175, 3030, 2880, 2720, 2570, 2410, 2250, 2080, 1910, 1750]
+        ];
+
+        // --- KONFIGURASI MAPPING KOORDINAT GAMBAR ---
+        // Nilai persentase ini dikalibrasi sesuai porsi kotak grafik pada gambar 1001610370.jpg
+        const GRID = {
+            xLeftP: 22.7,  // Posisi % X saat berat = 20 (2000 kg)
+            xRightP: 73.8, // Posisi % X saat berat = 33 (3300 kg)
+            valXMin: 20,   // Nilai Berat Min (x100 kg)
+            valXMax: 33,   // Nilai Berat Max (x100 kg)
+            
+            yTopP: 32.2,   // Posisi % Y saat Altitude = 20 (20000 ft)
+            yBottomP: 88.0,// Posisi % Y saat Altitude = -1 (-1000 ft)
+            valYMin: -1,   // Nilai Altitude Min (x1000 ft)
+            valYMax: 20    // Nilai Altitude Max (x1000 ft)
         };
 
-        const MAX_STRUCTURAL_WEIGHT_KG = 3175; // 7,000 lbs
+        let autoTemp = true;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            updateCalculation();
-            setupCanvasInteraction();
-            
-            window.addEventListener('resize', () => {
-                requestAnimationFrame(drawFigure49Chart);
-            });
-
-            setTimeout(drawFigure49Chart, 100);
-        });
-
-        function toggleManualTemp() {
-            state.isManualTemp = !state.isManualTemp;
-            const targetTempInput = document.getElementById('targetTemp');
-            const manualBtn = document.getElementById('manualBtn');
-
-            if (state.isManualTemp) {
-                targetTempInput.removeAttribute('readonly');
-                targetTempInput.classList.remove('bg-slate-900');
-                targetTempInput.classList.add('bg-slate-950', 'border-sky-500');
-                manualBtn.innerText = "Mode Otomatis";
-            } else {
-                targetTempInput.setAttribute('readonly', true);
-                targetTempInput.classList.add('bg-slate-900');
-                targetTempInput.classList.remove('bg-slate-950', 'border-sky-500');
-                manualBtn.innerText = "Ketik Manual Suhu";
-                updateCalculation();
-            }
+        function manualTempOverride() {
+            autoTemp = false;
+            performLookup();
         }
 
-        function applyPreset(startAlt, startTemp, targetAlt, targetTemp) {
-            document.getElementById('startAlt').value = startAlt;
-            document.getElementById('startTemp').value = startTemp;
-            document.getElementById('targetAlt').value = targetAlt;
-            document.getElementById('lapseRate').value = 2.0;
+        function calculate() {
+            autoTemp = true;
             
-            state.isManualTemp = true;
+            let startAlt = parseFloat(document.getElementById('startAlt').value) || 0;
+            let startTemp = parseFloat(document.getElementById('startTemp').value) || 0;
+            let targetAlt = parseFloat(document.getElementById('targetAlt').value) || 0;
+
+            // Turun 2 derajat untuk setiap kelipatan 1000 ft
+            let diffAlt = targetAlt - startAlt;
+            let kelipatanRibuan = Math.floor(diffAlt / 1000);
+            
+            let tempDrop = kelipatanRibuan * 2;
+            let targetTemp = startTemp - tempDrop;
+
             document.getElementById('targetTemp').value = targetTemp;
-            document.getElementById('targetTemp').removeAttribute('readonly');
-            document.getElementById('manualBtn').innerText = "Mode Otomatis";
             
-            updateCalculation(true);
+            performLookup();
         }
 
-        function resetDefaults() {
-            document.getElementById('startAlt').value = 0;
-            document.getElementById('startTemp').value = 35;
-            document.getElementById('targetAlt').value = 3500;
-            document.getElementById('lapseRate').value = 2.0;
+        function performLookup() {
+            let targetAlt = parseFloat(document.getElementById('targetAlt').value) || 0;
+            let targetTemp = parseFloat(document.getElementById('targetTemp').value) || 0;
+
+            document.getElementById('chartLookupInfo').innerHTML = `<i class="fa-solid fa-crosshairs fa-spin mr-1"></i> Mencari Potongan...`;
             
-            state.isManualTemp = false;
-            document.getElementById('targetTemp').setAttribute('readonly', true);
-            document.getElementById('manualBtn').innerText = "Ketik Manual Suhu";
+            // Batasi visual & hitungan agar tidak keluar grafik
+            let safeAlt = Math.max(-1000, Math.min(20000, targetAlt));
+            let safeTemp = Math.max(-30, Math.min(40, targetTemp));
+
+            // Dapatkan berat hasil interpolasi
+            let weight = interpolate2D(safeAlt, safeTemp);
             
-            updateCalculation();
+            // Mulai animasi penggambaran
+            drawChartLines(safeAlt, weight);
+
+            // Update UI hasil setelah delay singkat (agar serasi dengan animasi)
+            setTimeout(() => {
+                document.getElementById('resultWeight').innerHTML = `${weight} <span class="text-2xl text-gray-500">kg</span>`;
+                document.getElementById('chartLookupInfo').innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> Selesai: ${targetAlt} ft / ${targetTemp}°C`;
+                
+                // Jika weight mentok 3175, beri tahu user bahwa itu terhalang structural limit
+                if(weight >= 3175) {
+                    document.getElementById('chartLookupInfo').innerHTML += ` (Max Limit)`;
+                }
+            }, 900); // 900ms, serasi dengan waktu line digambar
         }
 
-        // Kalkulasi Uncapped Gross Weight berdasarkan geometri kurva Figure 4-9
-        function calculateUncappedGw(paFt, oatC) {
-            // Pada Figure 4-9:
-            // Intercept PA pada batas 31.75 kg (7000 lbs) adalah PA = 6.8 - 0.20 * OAT (dalam 1000 ft)
-            const paIntercept = 6800 - 200 * oatC;
-            
-            // Jika PA di bawah titik potong batas struktural, kapabilitas mesin murni melebihi 3175 kg
-            // Setiap penurunan 1000 ft menambah kapabilitas ~85 kg
-            const uncapped = MAX_STRUCTURAL_WEIGHT_KG + (paIntercept - paFt) * 0.085;
-            return Math.max(2000, Math.min(3600, uncapped));
+        function drawChartLines(altitudeFt, weightKg) {
+            // Konversi nilai aktual ke skala representasi Grafik
+            let altUnit = altitudeFt / 1000;
+            let weightUnit = weightKg / 100;
+
+            // Mapping ke persentase koordinat
+            let pctY = GRID.yBottomP - ((altUnit - GRID.valYMin) / (GRID.valYMax - GRID.valYMin)) * (GRID.yBottomP - GRID.yTopP);
+            let pctX = GRID.xLeftP + ((weightUnit - GRID.valXMin) / (GRID.valXMax - GRID.valXMin)) * (GRID.xRightP - GRID.xLeftP);
+
+            // Dapatkan elemen SVG
+            const hLine = document.getElementById('horizontalLine');
+            const vLine = document.getElementById('verticalLine');
+            const dot = document.getElementById('intersectDot');
+            const lBg = document.getElementById('labelBg');
+            const lTxt = document.getElementById('labelTxt');
+
+            // Reset Posisi Awal (Sembunyikan semuanya)
+            hLine.setAttribute('y1', `${pctY}%`);
+            hLine.setAttribute('y2', `${pctY}%`);
+            hLine.setAttribute('x1', `${GRID.xLeftP}%`);
+            hLine.setAttribute('x2', `${GRID.xLeftP}%`); // Mulai dari kiri mentok
+
+            vLine.setAttribute('x1', `${pctX}%`);
+            vLine.setAttribute('x2', `${pctX}%`);
+            vLine.setAttribute('y1', `${pctY}%`);
+            vLine.setAttribute('y2', `${pctY}%`); // Mulai dari titik potong
+
+            dot.style.opacity = 0;
+            lBg.style.opacity = 0;
+            lTxt.style.opacity = 0;
+
+            // Trigger Reflow agar CSS transition ter-reset
+            void hLine.getBoundingClientRect();
+            void vLine.getBoundingClientRect();
+
+            // STEP 1: Tarik garis horizontal ke kanan
+            hLine.setAttribute('x2', `${pctX}%`);
+
+            // STEP 2: Munculkan titik dan tarik garis vertikal ke bawah (setelah H-line selesai)
+            setTimeout(() => {
+                dot.setAttribute('cx', `${pctX}%`);
+                dot.setAttribute('cy', `${pctY}%`);
+                dot.style.opacity = 1;
+
+                vLine.setAttribute('y2', `${GRID.yBottomP}%`); // Tarik ke bawah
+                
+                // Tampilkan Label Berat
+                lTxt.textContent = weightKg;
+                // Atur posisi label box sedikit di atas sumbu X
+                let labelY = GRID.yBottomP - 1.5; 
+                lBg.setAttribute('x', `calc(${pctX}% - 25px)`);
+                lBg.setAttribute('y', `${labelY}%`);
+                lTxt.setAttribute('x', `${pctX}%`);
+                lTxt.setAttribute('y', `calc(${labelY}% + 10px)`);
+                
+                lBg.style.opacity = 1;
+                lTxt.style.opacity = 1;
+
+            }, 400); // 400ms delay 
         }
 
-        function getMaxOatLimit(paFt) {
-            return 50 - 2.0 * (paFt / 1000);
-        }
+        function interpolate2D(tAlt, tTemp) {
+            tAlt = Math.max(0, Math.min(20000, tAlt));
+            tTemp = Math.max(-30, Math.min(40, tTemp));
 
-        function updateCalculation(isManualOverride = false) {
-            state.startAlt = parseFloat(document.getElementById('startAlt').value) || 0;
-            state.startTemp = parseFloat(document.getElementById('startTemp').value) || 0;
-            state.targetAlt = parseFloat(document.getElementById('targetAlt').value) || 0;
-            state.lapseRate = parseFloat(document.getElementById('lapseRate').value) || 2.0;
-
-            document.getElementById('lapseRateVal').innerText = state.lapseRate.toFixed(1) + " °C / 1000 ft";
-
-            const altDiff = Math.max(0, state.targetAlt - state.startAlt);
-            state.calculatedTemp = state.startTemp - (altDiff / 1000.0) * state.lapseRate;
-
-            const targetTempInput = document.getElementById('targetTemp');
-            
-            if (!state.isManualTemp && !isManualOverride) {
-                targetTempInput.value = state.calculatedTemp.toFixed(1);
-            }
-
-            state.targetTemp = parseFloat(targetTempInput.value) || 0;
-
-            const tempNote = document.getElementById('tempCalcNote');
-            tempNote.innerHTML = `Hitung Otomatis: ${state.startTemp}°C - ((${state.targetAlt} - ${state.startAlt})/1000 &times; ${state.lapseRate}°C) = <span class="text-emerald-400 font-semibold">${state.calculatedTemp.toFixed(1)}°C</span>`;
-
-            state.uncappedGw = calculateUncappedGw(state.targetAlt, state.targetTemp);
-            state.finalGw = Math.min(state.uncappedGw, MAX_STRUCTURAL_WEIGHT_KG);
-            const finalGwLb = Math.round(state.finalGw * 2.20462);
-
-            const isaTemp = 15 - 1.98 * (state.targetAlt / 1000.0);
-            const deltaIsa = state.targetTemp - isaTemp;
-            const densityAlt = Math.round(state.targetAlt + 120 * deltaIsa);
-
-            document.getElementById('resGwKg').innerText = Math.round(state.finalGw).toLocaleString('id-ID');
-            document.getElementById('resGwLb').innerText = finalGwLb.toLocaleString('id-ID');
-
-            document.getElementById('metricPa').innerText = state.targetAlt.toLocaleString('id-ID') + " ft";
-            document.getElementById('metricOat').innerText = state.targetTemp.toFixed(1).replace('.', ',') + " °C";
-            document.getElementById('metricDa').innerText = densityAlt.toLocaleString('id-ID') + " ft";
-
-            const limiterBadge = document.getElementById('limiterBadge');
-            const warningBox = document.getElementById('warningBox');
-            const maxOatAllowed = getMaxOatLimit(state.targetAlt);
-
-            let warnings = [];
-
-            if (state.targetTemp > maxOatAllowed) {
-                warnings.push(`<strong>PERINGATAN SUHU:</strong> Suhu ${state.targetTemp}°C melebihi batas OAT Maksimum (${maxOatAllowed.toFixed(1)}°C / ISA+35°C) pada elevasi ${state.targetAlt} ft.`);
-            }
-
-            if (state.targetAlt > 18000) {
-                warnings.push(`<strong>PERINGATAN ELEVASI:</strong> Elevasi di atas 18.000 ft Density Altitude adalah hasil kalkulasi teoritis.`);
-            }
-
-            if (state.uncappedGw > MAX_STRUCTURAL_WEIGHT_KG) {
-                limiterBadge.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1.5";
-                limiterBadge.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Dibatasi Struktural (3.175 kg / 7.000 lb)`;
-            } else {
-                limiterBadge.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-500/20 text-sky-300 border border-sky-500/40 flex items-center gap-1.5";
-                limiterBadge.innerHTML = `<i class="fa-solid fa-gauge-high"></i> Dibatasi Performa Mesin/Aerodinamis`;
-            }
-
-            if (warnings.length > 0) {
-                warningBox.classList.remove('hidden');
-                warningBox.className = "p-3 rounded-xl border bg-rose-500/10 text-rose-300 border-rose-500/30 text-xs leading-relaxed space-y-1";
-                warningBox.innerHTML = warnings.join('<br>');
-            } else {
-                warningBox.classList.add('hidden');
-            }
-
-            updateExplanationTab();
-            requestAnimationFrame(drawFigure49Chart);
-        }
-
-        function updateExplanationTab() {
-            document.getElementById('expStartTemp').innerText = state.startTemp;
-            document.getElementById('expStartAlt').innerText = state.startAlt;
-            document.getElementById('expTargetAlt').innerText = state.targetAlt;
-            document.getElementById('expLapse').innerText = state.lapseRate.toFixed(1);
-            document.getElementById('expCalculatedTemp').innerText = state.calculatedTemp.toFixed(1);
-
-            const customNote = document.getElementById('expCustomNote');
-            if (Math.abs(state.calculatedTemp - state.targetTemp) > 0.1) {
-                customNote.classList.remove('hidden');
-                document.getElementById('expInputTemp').innerText = state.targetTemp.toFixed(1);
-            } else {
-                customNote.classList.add('hidden');
-            }
-
-            document.getElementById('expPaVal').innerText = state.targetAlt.toLocaleString('id-ID') + " ft";
-            document.getElementById('expTempVal').innerText = state.targetTemp.toFixed(1) + "°C";
-            document.getElementById('expUncapped').innerText = Math.round(state.uncappedGw).toLocaleString('id-ID') + " kg";
-            document.getElementById('expFinalGw').innerText = Math.round(state.finalGw).toLocaleString('id-ID') + " kg";
-        }
-
-        // ==============================================================
-        // RENDER GRAFIK FIGURE 4-9 (DENGAN TATA LETAK & SKALA MODEL RFM)
-        // ==============================================================
-        function drawFigure49Chart() {
-            const canvas = document.getElementById('chartCanvas');
-            if (!canvas) return;
-
-            const container = canvas.parentElement;
-            const rect = container.getBoundingClientRect();
-            if (rect.width === 0 || rect.height === 0) return;
-
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-
-            const ctx = canvas.getContext('2d');
-            ctx.scale(dpr, dpr);
-
-            const W = rect.width;
-            const H = rect.height;
-
-            // Margin untuk memuat Sumbu Ganda (Atas, Bawah, Kiri, Kanan)
-            const margin = { top: 45, right: 55, bottom: 50, left: 55 };
-            const chartW = W - margin.left - margin.right;
-            const chartH = H - margin.top - margin.bottom;
-
-            // Rentang Sumbu
-            const minGW_kg = 20.0, maxGW_kg = 33.0; // [kg x 100]
-            const minPA_ft = -1.0, maxPA_ft = 20.0; // [ft x 1000]
-
-            function getX(gw_kg) {
-                return margin.left + ((gw_kg - minGW_kg) / (maxGW_kg - minGW_kg)) * chartW;
-            }
-            function getY(pa_ft) {
-                return margin.top + ((maxPA_ft - pa_ft) / (maxPA_ft - minPA_ft)) * chartH;
-            }
-
-            // Canvas Background
-            ctx.fillStyle = '#060913';
-            ctx.fillRect(0, 0, W, H);
-
-            // 1. GRID LINES
-            ctx.lineWidth = 1;
-
-            // Vertical Grid (GW kg x 100)
-            for (let gw = 20; gw <= 33; gw += 1) {
-                const x = getX(gw);
-                ctx.beginPath();
-                ctx.moveTo(x, margin.top);
-                ctx.lineTo(x, H - margin.bottom);
-                ctx.strokeStyle = (gw % 5 === 0) ? '#1e293b' : '#0f172a';
-                ctx.stroke();
-
-                // Sumbu X Bawah: GROSS WEIGHT [kg x 100]
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '10px monospace';
-                ctx.textAlign = 'center';
-                ctx.fillText(gw.toString(), x, H - margin.bottom + 15);
-            }
-
-            // Sumbu X Atas: GROSS WEIGHT [lb x 100] (46 to 72)
-            for (let lb = 46; lb <= 72; lb += 2) {
-                const kg = (lb * 100) / 2.20462 / 100;
-                const x = getX(kg);
-                if (x >= margin.left && x <= W - margin.right) {
-                    ctx.fillStyle = '#cbd5e1';
-                    ctx.font = '9px monospace';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(lb.toString(), x, margin.top - 8);
+            let a0 = 0, a1 = 0;
+            for (let i = 0; i < alts.length - 1; i++) {
+                if (tAlt >= alts[i] && tAlt <= alts[i+1]) {
+                    a0 = i; a1 = i+1; break;
                 }
             }
+            if (tAlt === 20000) { a0 = 9; a1 = 10; } 
 
-            // Horizontal Grid (Pressure Alt ft x 1000)
-            for (let pa = -1; pa <= 20; pa += 1) {
-                const y = getY(pa);
-                ctx.beginPath();
-                ctx.moveTo(margin.left, y);
-                ctx.lineTo(W - margin.right, y);
-                ctx.strokeStyle = (pa % 5 === 0) ? '#334155' : '#1e293b';
-                ctx.stroke();
-
-                // Sumbu Y Kiri: PRESSURE ALTITUDE [ft x 1000]
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '10px monospace';
-                ctx.textAlign = 'right';
-                ctx.fillText(pa.toString(), margin.left - 8, y + 3);
-            }
-
-            // Sumbu Y Kanan: PRESSURE ALTITUDE [m x 100] (0 to 60)
-            for (let m = 0; m <= 60; m += 5) {
-                const pa_ft = (m * 100 * 3.28084) / 1000;
-                const y = getY(pa_ft);
-                if (y >= margin.top && y <= H - margin.bottom) {
-                    ctx.fillStyle = '#cbd5e1';
-                    ctx.font = '9px monospace';
-                    ctx.textAlign = 'left';
-                    ctx.fillText(m.toString(), W - margin.right + 8, y + 3);
+            let t0 = 0, t1 = 0;
+            for (let i = 0; i < temps.length - 1; i++) {
+                if (tTemp >= temps[i] && tTemp <= temps[i+1]) {
+                    t0 = i; t1 = i+1; break;
                 }
             }
+            if (tTemp === 40) { t0 = 6; t1 = 7; } 
 
-            // Boundary Frame
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(margin.left, margin.top, chartW, chartH);
+            let altFrac = (tAlt - alts[a0]) / (alts[a1] - alts[a0] || 1); 
+            let tempFrac = (tTemp - temps[t0]) / (temps[t1] - temps[t0] || 1);
 
-            // Label Sumbu
-            ctx.fillStyle = '#e2e8f0';
-            ctx.font = 'bold 9px sans-serif';
-            ctx.textAlign = 'center';
+            let q00 = performanceData[t0][a0];
+            let q10 = performanceData[t1][a0];
+            let q01 = performanceData[t0][a1];
+            let q11 = performanceData[t1][a1];
 
-            // X Top & Bottom Titles
-            ctx.fillText('GROSS WEIGHT [lb x 100]', margin.left + chartW / 2, margin.top - 24);
-            ctx.fillText('GROSS WEIGHT [kg x 100]', margin.left + chartW / 2, H - 12);
+            let w0 = q00 + altFrac * (q01 - q00);
+            let w1 = q10 + altFrac * (q11 - q10);
+            let finalWeight = w0 + tempFrac * (w1 - w0);
 
-            // Y Left & Right Titles
-            ctx.save();
-            ctx.translate(14, margin.top + chartH / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('PRESSURE ALTITUDE [ft x 1000]', 0, 0);
-            ctx.restore();
-
-            ctx.save();
-            ctx.translate(W - 14, margin.top + chartH / 2);
-            ctx.rotate(Math.PI / 2);
-            ctx.fillText('PRESSURE ALTITUDE [m x 100]', 0, 0);
-            ctx.restore();
-
-            // 2. STRUCTURAL MAXIMUM LIMIT LINE (31.75 kg / 7000 lbs)
-            const x3175 = getX(31.75);
-            ctx.beginPath();
-            ctx.moveTo(x3175, margin.top);
-            ctx.lineTo(x3175, H - margin.bottom);
-            ctx.strokeStyle = '#f43f5e';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // 3. GARIS 18000 ft HD BOUNDARY & CALCULATED AREA
-            // Garis 18000 ft HD
-            ctx.beginPath();
-            ctx.moveTo(getX(24.8), getY(18.8));
-            ctx.lineTo(getX(22.6), getY(14.0));
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.fillStyle = '#e2e8f0';
-            ctx.font = 'italic bold 8px sans-serif';
-            ctx.save();
-            ctx.translate(getX(23.7), getY(16.4));
-            ctx.rotate(-Math.PI / 3.2);
-            ctx.fillText('18000 ft HD', 0, -4);
-            ctx.restore();
-
-            // Garis putus-putus kalkulasi di atas 18000ft HD
-            ctx.beginPath();
-            ctx.setLineDash([3, 3]);
-            ctx.strokeStyle = '#64748b';
-            for (let gw = 22.5; gw <= 26.5; gw += 1.0) {
-                ctx.moveTo(getX(gw), getY(14.0 + (gw - 22.5) * 2.18));
-                ctx.lineTo(getX(gw - 2.5), getY(19.8));
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // Kotak Teks "PERFORMANCE ABOVE 18000 ft DENSITY ALTITUDE ARE CALCULATED"
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 0.8;
-            ctx.strokeRect(getX(25.2), getY(18.6), 115, 24);
-            ctx.fillRect(getX(25.2), getY(18.6), 115, 24);
-
-            ctx.fillStyle = '#cbd5e1';
-            ctx.font = 'bold 7px sans-serif';
-            ctx.textAlign = 'left';
-            ctx.fillText('PERFORMANCE ABOVE', getX(25.5), getY(18.6) + 8);
-            ctx.fillText('18000 ft DENSITY ALTITUDE', getX(25.5), getY(18.6) + 15);
-            ctx.fillText('ARE CALCULATED.', getX(25.5), getY(18.6) + 22);
-
-            // 4. MAX OAT LIMIT (DASHED LINE)
-            ctx.beginPath();
-            ctx.setLineDash([5, 4]);
-            ctx.strokeStyle = '#f59e0b';
-            ctx.lineWidth = 2;
-            for (let pa = -1; pa <= 14; pa += 0.5) {
-                const maxOat = getMaxOatLimit(pa * 1000);
-                const gw = (calculateUncappedGw(pa * 1000, maxOat)) / 100;
-                const x = getX(Math.min(31.75, gw));
-                const y = getY(pa);
-                if (pa === -1) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            ctx.fillStyle = '#f59e0b';
-            ctx.font = 'bold 8px sans-serif';
-            ctx.save();
-            ctx.translate(getX(26.2), getY(9.8));
-            ctx.rotate(-Math.PI / 3.5);
-            ctx.fillText('MAX OAT LIMIT', 0, 0);
-            ctx.restore();
-
-            // 5. KURVA TEMPERATUR (-30°C S.D. +40°C)
-            const temps = [-30, -20, -10, 0, 10, 20, 30, 40];
-            temps.forEach(t => {
-                ctx.beginPath();
-                let started = false;
-
-                for (let pa = -1; pa <= 18.8; pa += 0.2) {
-                    const uncappedKg = calculateUncappedGw(pa * 1000, t);
-                    const gw = uncappedKg / 100;
-                    if (gw <= 31.75) {
-                        const x = getX(gw);
-                        const y = getY(pa);
-                        if (!started) { ctx.moveTo(x, y); started = true; }
-                        else ctx.lineTo(x, y);
-                    }
-                }
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-
-                // Label Angka Suhu pada Kurva
-                const labelPa = 12.0 - (t + 30) * 0.15;
-                const labelGw = calculateUncappedGw(labelPa * 1000, t) / 100;
-                if (labelGw <= 31.75) {
-                    const lx = getX(labelGw);
-                    const ly = getY(labelPa);
-                    if (lx >= margin.left && lx <= W - margin.right) {
-                        ctx.fillStyle = '#38bdf8';
-                        ctx.font = 'bold 9px sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(`${t}`, lx, ly - 3);
-                    }
-                }
-            });
-
-            // 6. KOTAK SKEMA INSET ATAS KANAN (READING METHOD SCHEMATIC)
-            const insetW = 50, insetH = 40;
-            const insetX = W - margin.right - insetW - 10;
-            const insetY = margin.top + 10;
-
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = 1;
-            ctx.fillRect(insetX, insetY, insetW, insetH);
-            ctx.strokeRect(insetX, insetY, insetW, insetH);
-
-            // Garis Skema
-            ctx.beginPath();
-            ctx.moveTo(insetX + 5, insetY + 5);
-            ctx.lineTo(insetX + insetW - 5, insetY + 20);
-            ctx.lineTo(insetX + insetW - 5, insetY + insetH - 5);
-            ctx.strokeStyle = '#94a3b8';
-            ctx.stroke();
-
-            // Panah Skema Horizontal & Vertikal
-            ctx.beginPath();
-            ctx.moveTo(insetX + 5, insetY + 12);
-            ctx.lineTo(insetX + 28, insetY + 12);
-            ctx.lineTo(insetX + 28, insetY + insetH - 5);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.setLineDash([2, 2]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // 7. PROYEKSI GARIS PENERBANGAN SAAT INI (GLOWING NEON GREEN)
-            const paTarget = state.targetAlt / 1000;
-            const uncappedGwKg = state.uncappedGw;
-            const finalGwKg = state.finalGw;
-
-            const yTarget = getY(paTarget);
-            const xUncapped = getX(uncappedGwKg / 100);
-            const xFinal = getX(finalGwKg / 100);
-
-            // Garis Horizontal dari Y Kiri ke Titik Suhu / Limit
-            ctx.beginPath();
-            ctx.setLineDash([6, 4]);
-            ctx.strokeStyle = '#10b981';
-            ctx.lineWidth = 2.5;
-            ctx.shadowColor = '#10b981';
-            ctx.shadowBlur = 8;
-            ctx.moveTo(margin.left, yTarget);
-            ctx.lineTo(Math.min(x3175, xUncapped), yTarget);
-            ctx.stroke();
-
-            // Garis Vertikal Turun ke Sumbu X Bawah
-            ctx.beginPath();
-            ctx.moveTo(xFinal, yTarget);
-            ctx.lineTo(xFinal, H - margin.bottom);
-            ctx.stroke();
-
-            ctx.shadowBlur = 0;
-            ctx.setLineDash([]);
-
-            // Marker Point
-            ctx.beginPath();
-            ctx.arc(margin.left, yTarget, 5, 0, 2 * Math.PI);
-            ctx.fillStyle = '#10b981';
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(xFinal, yTarget, 6, 0, 2 * Math.PI);
-            ctx.fillStyle = '#34d399';
-            ctx.shadowColor = '#34d399';
-            ctx.shadowBlur = 10;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Badge Hasil di Sumbu Bawah
-            const badgeText = `${Math.round(finalGwKg)} kg`;
-            ctx.font = 'bold 11px font-mono';
-            const tw = ctx.measureText(badgeText).width;
-
-            ctx.fillStyle = '#065f46';
-            ctx.strokeStyle = '#34d399';
-            ctx.lineWidth = 1;
-            ctx.roundRect(xFinal - (tw + 12) / 2, H - margin.bottom + 18, tw + 12, 18, 4);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = '#ecfdf5';
-            ctx.textAlign = 'center';
-            ctx.fillText(badgeText, xFinal, H - margin.bottom + 31);
+            return Math.min(3175, Math.round(finalWeight));
         }
 
-        function setupCanvasInteraction() {
-            const canvas = document.getElementById('chartCanvas');
-            const coordSpan = document.getElementById('cursorCoords');
-
-            canvas.addEventListener('mousemove', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const margin = { top: 45, right: 55, bottom: 50, left: 55 };
-                const chartW = rect.width - margin.left - margin.right;
-                const chartH = rect.height - margin.top - margin.bottom;
-
-                if (x >= margin.left && x <= rect.width - margin.right &&
-                    y >= margin.top && y <= rect.height - margin.bottom) {
-                    
-                    const gw_kg = 20.0 + ((x - margin.left) / chartW) * 13.0;
-                    const pa_ft = 20.0 - ((y - margin.top) / chartH) * 21.0;
-
-                    coordSpan.innerText = `Alt: ${Math.round(pa_ft * 1000)} ft | GW: ${Math.round(gw_kg * 100)} kg`;
-                } else {
-                    coordSpan.innerText = `Alt: - | GW: -`;
-                }
-            });
-        }
+        // Inisiasi awal saat halaman di-load
+        window.onload = () => setTimeout(calculate, 300);
     </script>
 </body>
 </html>
