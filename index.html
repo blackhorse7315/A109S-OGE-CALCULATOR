@@ -13,7 +13,6 @@
             background-color: #f3f4f6;
         }
         
-        /* Pengaturan garis gambar SVG */
         .chart-line {
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             stroke-linecap: round;
@@ -22,7 +21,6 @@
             transition: opacity 0.3s ease-in-out;
         }
 
-        /* Custom scrollbar */
         .image-container::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -36,7 +34,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 lg:p-8">
 
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-6xl overflow-hidden flex flex-col">
         <!-- Header -->
@@ -59,38 +57,32 @@
                 
                 <div class="image-container flex-grow bg-gray-50 rounded-xl p-2 border border-gray-200 overflow-auto max-h-[600px] flex justify-center items-start">
                     
-                    <!-- Container scaling untuk zoom & overlay -->
                     <div class="relative w-full max-w-lg h-auto transform origin-top transition-transform duration-300 hover:scale-[1.2] cursor-zoom-in group" id="chartWrapper">
                         
                         <!-- Gambar Asli -->
                         <img src="1001610370.jpg" alt="Chart OGE A109S" class="w-full h-auto block rounded shadow-sm" id="bgImage"
                              onerror="this.onerror=null; this.src='https://via.placeholder.com/600x800?text=Gambar+1001610370.jpg+Tidak+Ditemukan'; alert('Mohon pastikan gambar 1001610370.jpg satu folder dengan aplikasi.');">
                         
-                        <!-- SVG Overlay untuk Menggambar Garis -->
+                        <!-- SVG Overlay -->
                         <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" id="drawingLayer">
                             
-                            <!-- Garis Horizontal (Altitude -> Titik Potong Suhu) -->
                             <line id="horizontalLine" class="chart-line" 
                                   x1="22.7%" y1="0%" x2="22.7%" y2="0%" 
                                   stroke="#e11d48" stroke-width="2.5" stroke-dasharray="6,4" />
                             
-                            <!-- Titik Perpotongan -->
                             <circle id="intersectDot" class="chart-dot" 
                                     cx="0%" cy="0%" r="5" 
                                     fill="#e11d48" stroke="white" stroke-width="2" opacity="0" />
                                     
-                            <!-- Garis Vertikal (Titik Potong -> Gross Weight Bawah) -->
                             <line id="verticalLine" class="chart-line" 
                                   x1="0%" y1="0%" x2="0%" y2="0%" 
                                   stroke="#e11d48" stroke-width="2.5" stroke-dasharray="6,4" />
                             
-                            <!-- Label Nilai di Grafik -->
                             <rect id="labelBg" x="0%" y="0%" width="50" height="20" fill="#e11d48" rx="4" opacity="0" class="transition-opacity duration-300"></rect>
                             <text id="labelTxt" x="0%" y="0%" fill="white" font-size="12" font-weight="bold" text-anchor="middle" alignment-baseline="middle" opacity="0" class="transition-opacity duration-300"></text>
 
                         </svg>
 
-                        <!-- Hint overlay saat di hover -->
                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-all pointer-events-none rounded"></div>
                     </div>
 
@@ -102,7 +94,6 @@
 
             <!-- Calculator Section -->
             <div class="flex flex-col gap-6">
-                <!-- Input Section -->
                 <div class="space-y-4">
                     <h2 class="text-lg font-semibold text-gray-800 border-b pb-2">
                         <i class="fa-solid fa-calculator mr-2 text-blue-600"></i> Data Penerbangan
@@ -111,7 +102,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Ketinggian Awal (feet)</label>
-                            <input type="number" id="startAlt" value="0" step="500" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" onchange="calculate()">
+                            <input type="number" id="startAlt" value="140" step="100" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" onchange="calculate()">
                         </div>
 
                         <div>
@@ -122,14 +113,14 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Elevasi Tujuan (feet)</label>
-                        <input type="number" id="targetAlt" value="3500" step="500" class="w-full px-4 py-2 border border-blue-400 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none transition font-semibold" onchange="calculate()">
+                        <input type="number" id="targetAlt" value="4300" step="100" class="w-full px-4 py-2 border border-blue-400 bg-blue-50 rounded-lg focus:ring-2 focus:ring-blue-600 outline-none transition font-semibold" onchange="calculate()">
                     </div>
 
                     <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
                         <label class="block text-sm font-medium text-blue-800 mb-1">Estimasi Suhu Tujuan (°C)</label>
                         <div class="flex items-center justify-between">
-                            <input type="number" id="targetTemp" class="w-2/3 px-4 py-2 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold" onchange="manualTempOverride()">
-                            <button onclick="calculate()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded shadow hover:bg-blue-700 transition" title="Hitung ulang otomatis">
+                            <input type="number" id="targetTemp" value="40" class="w-2/3 px-4 py-2 border border-blue-300 bg-white rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-semibold" onchange="manualTempOverride()">
+                            <button onclick="calculate()" class="text-xs bg-blue-600 text-white px-3 py-2 rounded shadow hover:bg-blue-700 transition flex items-center" title="Hitung ulang otomatis">
                                 <i class="fa-solid fa-rotate-right mr-1"></i> Auto
                             </button>
                         </div>
@@ -141,8 +132,9 @@
                 <div class="flex flex-col justify-center items-center bg-gray-50 rounded-xl p-6 border-2 border-dashed border-gray-200 mt-auto shadow-inner relative overflow-hidden">
                     
                     <h3 class="text-gray-500 font-medium text-center z-10">Maximum Gross Weight</h3>
-                    <div class="text-5xl font-bold text-gray-800 mt-1 tracking-tight z-10" id="resultWeight">
-                        ... <span class="text-2xl text-gray-500">kg</span>
+                    <div class="text-5xl font-bold text-gray-800 mt-1 tracking-tight z-10 flex items-baseline gap-2">
+                        <span id="resultWeight">...</span>
+                        <span class="text-2xl text-gray-500 font-medium">kg</span>
                     </div>
                     
                     <div class="mt-4 w-full text-center z-10">
@@ -156,7 +148,7 @@
                     </div>
                 </div>
                 
-                <button onclick="calculate()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95">
+                <button onclick="performLookup()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95">
                     Tarik Garis & Hitung <i class="fa-solid fa-arrow-right-long ml-2"></i>
                 </button>
             </div>
@@ -164,40 +156,39 @@
     </div>
 
     <script>
-        // Data matriks yang diperhalus (dalam kg) berdasarkan chart 109G0040A013
+        // PERBAIKAN MATRIKS: Nilai teoritis (uncapped) digunakan pada array ini
+        // Jika hasil hitungan melebihi 3175, sistem akan memblokirnya di angka 3175
+        // Ini memastikan area yang terpotong garis lurus maksimum terhitung sempurna.
         const alts = [0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000];
         const temps = [-30, -20, -10, 0, 10, 20, 30, 40];
 
         const performanceData = [
-            /* T = -30 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3060],
-            /* T = -20 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3175, 3140, 3020, 2880],
-            /* T = -10 */ [3175, 3175, 3175, 3175, 3175, 3175, 3175, 3130, 2980, 2830, 2700],
-            /* T =   0 */ [3175, 3175, 3175, 3175, 3175, 3175, 3120, 2970, 2820, 2660, 2510],
-            /* T =  10 */ [3175, 3175, 3175, 3175, 3175, 3100, 2960, 2800, 2650, 2500, 2340],
-            /* T =  20 */ [3175, 3175, 3175, 3175, 3080, 2940, 2790, 2630, 2480, 2320, 2160],
-            /* T =  30 */ [3175, 3175, 3175, 3050, 2910, 2760, 2600, 2450, 2290, 2120, 1950],
-            /* T =  40 */ [3175, 3175, 3030, 2880, 2720, 2570, 2410, 2250, 2080, 1910, 1750]
+            /* T = -30 */ [4500, 4500, 4500, 4500, 4500, 4500, 4500, 4500, 4500, 3350, 3100],
+            /* T = -20 */ [4500, 4500, 4500, 4500, 4500, 4500, 4500, 4500, 3350, 3100, 2850],
+            /* T = -10 */ [4500, 4500, 4500, 4500, 4500, 4500, 4500, 3370, 3120, 2850, 2600],
+            /* T =   0 */ [4500, 4500, 4500, 4500, 4500, 4500, 3350, 3100, 2850, 2600, 2350],
+            /* T =  10 */ [4500, 4500, 4500, 3780, 3540, 3300, 3060, 2820, 2580, 2320, 2050],
+            /* T =  20 */ [4230, 4000, 3770, 3540, 3310, 3080, 2850, 2600, 2350, 2100, 1820],
+            /* T =  30 */ [3980, 3740, 3500, 3260, 3020, 2780, 2550, 2300, 2060, 1800, 1550],
+            /* T =  40 */ [3750, 3500, 3250, 3000, 2750, 2480, 2220, 1950, 1680, 1400, 1100]
         ];
 
-        // --- KONFIGURASI MAPPING KOORDINAT GAMBAR ---
-        // Nilai persentase ini dikalibrasi sesuai porsi kotak grafik pada gambar 1001610370.jpg
         const GRID = {
             xLeftP: 22.7,  // Posisi % X saat berat = 20 (2000 kg)
             xRightP: 73.8, // Posisi % X saat berat = 33 (3300 kg)
-            valXMin: 20,   // Nilai Berat Min (x100 kg)
-            valXMax: 33,   // Nilai Berat Max (x100 kg)
+            valXMin: 20,   
+            valXMax: 33,   
             
             yTopP: 32.2,   // Posisi % Y saat Altitude = 20 (20000 ft)
             yBottomP: 88.0,// Posisi % Y saat Altitude = -1 (-1000 ft)
-            valYMin: -1,   // Nilai Altitude Min (x1000 ft)
-            valYMax: 20    // Nilai Altitude Max (x1000 ft)
+            valYMin: -1,   
+            valYMax: 20    
         };
 
         let autoTemp = true;
 
         function manualTempOverride() {
             autoTemp = false;
-            performLookup();
         }
 
         function calculate() {
@@ -207,7 +198,6 @@
             let startTemp = parseFloat(document.getElementById('startTemp').value) || 0;
             let targetAlt = parseFloat(document.getElementById('targetAlt').value) || 0;
 
-            // Turun 2 derajat untuk setiap kelipatan 1000 ft
             let diffAlt = targetAlt - startAlt;
             let kelipatanRibuan = Math.floor(diffAlt / 1000);
             
@@ -215,7 +205,6 @@
             let targetTemp = startTemp - tempDrop;
 
             document.getElementById('targetTemp').value = targetTemp;
-            
             performLookup();
         }
 
@@ -225,77 +214,64 @@
 
             document.getElementById('chartLookupInfo').innerHTML = `<i class="fa-solid fa-crosshairs fa-spin mr-1"></i> Mencari Potongan...`;
             
-            // Batasi visual & hitungan agar tidak keluar grafik
             let safeAlt = Math.max(-1000, Math.min(20000, targetAlt));
             let safeTemp = Math.max(-30, Math.min(40, targetTemp));
 
-            // Dapatkan berat hasil interpolasi
+            // Dapatkan berat (sudah terlimit maksimum 3175 di dalam fungsi interpolate2D)
             let weight = interpolate2D(safeAlt, safeTemp);
             
-            // Mulai animasi penggambaran
             drawChartLines(safeAlt, weight);
 
-            // Update UI hasil setelah delay singkat (agar serasi dengan animasi)
             setTimeout(() => {
-                document.getElementById('resultWeight').innerHTML = `${weight} <span class="text-2xl text-gray-500">kg</span>`;
-                document.getElementById('chartLookupInfo').innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> Selesai: ${targetAlt} ft / ${targetTemp}°C`;
+                document.getElementById('resultWeight').innerHTML = weight;
                 
-                // Jika weight mentok 3175, beri tahu user bahwa itu terhalang structural limit
-                if(weight >= 3175) {
-                    document.getElementById('chartLookupInfo').innerHTML += ` (Max Limit)`;
-                }
-            }, 900); // 900ms, serasi dengan waktu line digambar
+                let limitWarning = weight >= 3175 ? ` <span class="font-bold text-red-600">(Maks Limit)</span>` : ``;
+                document.getElementById('chartLookupInfo').innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> Selesai: ${targetAlt} ft / ${targetTemp}°C${limitWarning}`;
+                
+            }, 900); 
         }
 
         function drawChartLines(altitudeFt, weightKg) {
-            // Konversi nilai aktual ke skala representasi Grafik
             let altUnit = altitudeFt / 1000;
             let weightUnit = weightKg / 100;
 
-            // Mapping ke persentase koordinat
             let pctY = GRID.yBottomP - ((altUnit - GRID.valYMin) / (GRID.valYMax - GRID.valYMin)) * (GRID.yBottomP - GRID.yTopP);
             let pctX = GRID.xLeftP + ((weightUnit - GRID.valXMin) / (GRID.valXMax - GRID.valXMin)) * (GRID.xRightP - GRID.xLeftP);
 
-            // Dapatkan elemen SVG
             const hLine = document.getElementById('horizontalLine');
             const vLine = document.getElementById('verticalLine');
             const dot = document.getElementById('intersectDot');
             const lBg = document.getElementById('labelBg');
             const lTxt = document.getElementById('labelTxt');
 
-            // Reset Posisi Awal (Sembunyikan semuanya)
+            // Reset
             hLine.setAttribute('y1', `${pctY}%`);
             hLine.setAttribute('y2', `${pctY}%`);
             hLine.setAttribute('x1', `${GRID.xLeftP}%`);
-            hLine.setAttribute('x2', `${GRID.xLeftP}%`); // Mulai dari kiri mentok
+            hLine.setAttribute('x2', `${GRID.xLeftP}%`); 
 
             vLine.setAttribute('x1', `${pctX}%`);
             vLine.setAttribute('x2', `${pctX}%`);
             vLine.setAttribute('y1', `${pctY}%`);
-            vLine.setAttribute('y2', `${pctY}%`); // Mulai dari titik potong
+            vLine.setAttribute('y2', `${pctY}%`); 
 
             dot.style.opacity = 0;
             lBg.style.opacity = 0;
             lTxt.style.opacity = 0;
 
-            // Trigger Reflow agar CSS transition ter-reset
             void hLine.getBoundingClientRect();
             void vLine.getBoundingClientRect();
 
-            // STEP 1: Tarik garis horizontal ke kanan
             hLine.setAttribute('x2', `${pctX}%`);
 
-            // STEP 2: Munculkan titik dan tarik garis vertikal ke bawah (setelah H-line selesai)
             setTimeout(() => {
                 dot.setAttribute('cx', `${pctX}%`);
                 dot.setAttribute('cy', `${pctY}%`);
                 dot.style.opacity = 1;
 
-                vLine.setAttribute('y2', `${GRID.yBottomP}%`); // Tarik ke bawah
+                vLine.setAttribute('y2', `${GRID.yBottomP}%`); 
                 
-                // Tampilkan Label Berat
                 lTxt.textContent = weightKg;
-                // Atur posisi label box sedikit di atas sumbu X
                 let labelY = GRID.yBottomP - 1.5; 
                 lBg.setAttribute('x', `calc(${pctX}% - 25px)`);
                 lBg.setAttribute('y', `${labelY}%`);
@@ -305,7 +281,7 @@
                 lBg.style.opacity = 1;
                 lTxt.style.opacity = 1;
 
-            }, 400); // 400ms delay 
+            }, 400); 
         }
 
         function interpolate2D(tAlt, tTemp) {
@@ -340,11 +316,11 @@
             let w1 = q10 + altFrac * (q11 - q10);
             let finalWeight = w0 + tempFrac * (w1 - w0);
 
+            // Mencegah hasil melewati batas vertikal struktural (3175 kg)
             return Math.min(3175, Math.round(finalWeight));
         }
 
-        // Inisiasi awal saat halaman di-load
-        window.onload = () => setTimeout(calculate, 300);
+        window.onload = () => setTimeout(performLookup, 300);
     </script>
 </body>
 </html>
